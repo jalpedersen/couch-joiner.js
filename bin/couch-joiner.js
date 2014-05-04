@@ -57,7 +57,12 @@ if (argv.file) {
     if (/get/i.test(argv.method)) {
         connection.download(argv.method, argv.file);
     } else {
-        connection.upload(argv.method, argv.file);
+        connection.upload(argv.method, argv.file).then(function(response) {
+            console.log(response)
+        },
+        function(error) {
+            console.error(error);
+        });
     }
 } else {
     connection.sendRequest(argv.method).then(function(response) {
