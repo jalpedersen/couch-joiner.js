@@ -17,12 +17,14 @@ var yargs = require('yargs')
             .alias('f', 'file')
             .alias('m', 'method')
             .alias('u', 'url')
+            .alias('q', 'query')
             .alias('c', 'credentials')
             .alias('h', 'help')
             .boolean('h')
             .describe('f', 'File (either input or output depending on method')
             .describe('m', 'Method: get, post, put, delete')
             .describe('u', 'CouchDB instance URL')
+            .describe('q', 'Query parameters')
             .describe('c', 'Credentials: "username:password"')
             .describe('h', 'Show help')
 
@@ -35,6 +37,9 @@ if (argv.help) {
     return;
 }
 var dbUrl = argv.url + '/'+ argv._.join('/');
+if (argv.query) {
+    dbUrl += '?' + argv.query;
+}
 var dbOptions = url.parse(dbUrl);
 
 var connection = new CouchConnection(dbOptions);
@@ -50,9 +55,9 @@ function template(id) {
 
 if (argv.file) {
     if (/get/i.test(argv.method)) {
-        connection.download(argv.file);
+        connection.download(argv.method, argv.file);
     } else {
-        connection.upload(argv.file);
+        connection.upload(argv.method, argv.file);
     }
 } else {
     connection.sendRequest(argv.method).then(function(response) {
