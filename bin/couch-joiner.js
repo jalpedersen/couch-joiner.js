@@ -6,11 +6,7 @@
 var ProgressBar = require('progress');
 var fs = require('fs');
 var _ = require('underscore');
-var http = require('http');
-var https = require('https');
 var url = require('url');
-var q = require('q');
-var prompt = require('prompt');
 var CouchConnection = require('../lib/couch-connection').CouchConnection;
 
 var yargs = require('yargs')
