@@ -18,6 +18,8 @@ function view(dbOptions) {
 function map(key, value, doc) {
     console.log('mapping ' + doc._id);
     console.log(doc);
+    doc.new_value = 'hello';
+    return doc;
 
 }
 
