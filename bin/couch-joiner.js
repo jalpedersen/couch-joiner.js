@@ -15,6 +15,7 @@ var yargs = require('yargs')
             .alias('u', 'url')
             .alias('q', 'query')
             .alias('c', 'credentials')
+            .alias('H', 'header')
             .alias('h', 'help')
             .boolean('h')
             .describe('f', 'File (either input or output depending on method')
@@ -22,6 +23,7 @@ var yargs = require('yargs')
             .describe('u', 'CouchDB instance URL')
             .describe('q', 'Query parameters')
             .describe('c', 'Credentials: "username:password"')
+            .describe('H', 'Headers')
             .describe('h', 'Show help')
 
             .default('m', 'get')
@@ -36,7 +38,29 @@ var dbUrl = argv.url + '/'+ argv._.join('/');
 if (argv.query) {
     dbUrl += '?' + argv.query;
 }
+var headers = {
+    'content-type': 'application/json'
+};
+function headerSplit(str) {
+    var idx = str.indexOf(':');
+    if (idx > -1) {
+        return [str.substring(0,idx), str.substring(idx+1)];
+    } else {
+        return [str, ''];
+    }
+}
+if (argv.header) {
+    var hs =  argv.header;
+    if ( ! _.isArray(argv.header)) {
+        hs = [argv.header];
+    }
+    _.each(hs, function(v,k) {
+        var h = headerSplit(argv.header);
+        headers[h[0]] = h[1];
+    });
+}
 var dbOptions = url.parse(dbUrl);
+dbOptions.headers = headers;
 
 var connection = new CouchConnection(dbOptions);
 
