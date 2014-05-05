@@ -11,11 +11,13 @@ var CouchConnection = require('../lib/couch-connection').CouchConnection;
 
 var yargs = require('yargs')
             .alias('f', 'file')
+            .alias('b', 'body')
             .alias('m', 'method')
             .alias('u', 'url')
             .alias('q', 'query')
             .alias('c', 'credentials')
             .alias('H', 'header')
+            .alias('M', 'mapper')
             .alias('h', 'help')
             .boolean('h')
             .describe('f', 'File (either input or output depending on method')
@@ -24,6 +26,7 @@ var yargs = require('yargs')
             .describe('q', 'Query parameters')
             .describe('c', 'Credentials: "username:password"')
             .describe('H', 'Headers')
+            .describe('M', 'Mapper')
             .describe('h', 'Show help')
 
             .default('m', 'get')
@@ -34,9 +37,14 @@ if (argv.help) {
     yargs.showHelp();
     return;
 }
-var dbUrl = argv.url + '/'+ argv._.join('/');
+var dbUrl = argv.url;
+var path = argv._;
 if (argv.query) {
-    dbUrl += '?' + argv.query;
+    if (_.isArray(argv.query)) {
+        dbUrl += '?' + argv.query.join('&');
+    } else {
+        dbUrl += '?' + argv.query;
+    }
 }
 var headers = {
     'content-type': 'application/json'
@@ -59,16 +67,22 @@ if (argv.header) {
         headers[h[0]] = h[1];
     });
 }
-var dbOptions = url.parse(dbUrl);
+var dbOptions = url.parse(dbUrl, true);
 dbOptions.headers = headers;
 
 var connection = new CouchConnection(dbOptions);
 
-if (argv.file) {
+if (argv.mapper) {
+    var mapper = require(fs.realpathSync(argv.mapper + '.js'));
+    connection.map(mapper).then(function(response) {
+    }, function(error) {
+        console.error(error);
+    });
+} else if (argv.file) {
     if (/get/i.test(argv.method)) {
-        connection.download(argv.method, argv.file);
+        connection.download(argv.method, path, argv.file);
     } else {
-        connection.upload(argv.method, argv.file).then(function(response) {
+        connection.upload(argv.method, path, argv.file).then(function(response) {
             console.log(response);
         },
         function(error) {
@@ -76,7 +90,7 @@ if (argv.file) {
         });
     }
 } else {
-    connection.sendRequest(argv.method).then(function(response) {
+    connection.sendRequest(argv.method, path, argv.body).then(function(response) {
         console.log(response);
     }, function(error) {
         console.error(error);
