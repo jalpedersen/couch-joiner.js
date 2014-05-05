@@ -27,11 +27,11 @@ var yargs = require('yargs')
             .describe('h', 'Show help')
 
             .default('m', 'get')
-            .default('u', 'http://localhost:5984')
+            .default('u', 'http://localhost:5984');
 var argv = yargs.argv;
 
 if (argv.help) {
-    yargs.showHelp()
+    yargs.showHelp();
     return;
 }
 var dbUrl = argv.url + '/'+ argv._.join('/');
@@ -64,21 +64,12 @@ dbOptions.headers = headers;
 
 var connection = new CouchConnection(dbOptions);
 
-function template(id) {
-
-    return {
-        _id: id,
-        type: 'webapp',
-        contextPath: '/' + id
-    }
-}
-
 if (argv.file) {
     if (/get/i.test(argv.method)) {
         connection.download(argv.method, argv.file);
     } else {
         connection.upload(argv.method, argv.file).then(function(response) {
-            console.log(response)
+            console.log(response);
         },
         function(error) {
             console.error(error);
@@ -86,7 +77,7 @@ if (argv.file) {
     }
 } else {
     connection.sendRequest(argv.method).then(function(response) {
-        console.log(response)
+        console.log(response);
     }, function(error) {
         console.error(error);
     });
