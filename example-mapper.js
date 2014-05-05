@@ -7,7 +7,7 @@
 function view(dbOptions) {
     return function(doc) {
         emit(doc._id, null);
-    }
+    };
 }
 
 
