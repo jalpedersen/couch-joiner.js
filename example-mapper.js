@@ -1,3 +1,4 @@
+var CouchConnection = require('./lib/couch-connection').CouchConnection;
 /**
  * Defines the view from where the mapper get it's documents
  *
@@ -16,10 +17,8 @@ function view(dbOptions) {
  * If a non-object is returned, nothing happens
  */
 function map(key, value, doc) {
-    console.log('mapping ' + doc._id);
-    console.log(doc);
     doc.new_value = 'hello';
-    return doc;
+    //return doc;
 
 }
 
@@ -28,6 +27,10 @@ function map(key, value, doc) {
  */
 function prepare(dbOptions) {
     console.log('Preparing to run mapper');
+    var connection = new CouchConnection(dbOptions);
+    connection.sendRequest('get', '_all_docs', null, {query: {include_docs: true}}).then(function(response) {
+        console.log(response);
+    }, function(error) {console.error(error);});
 }
 
 /**
