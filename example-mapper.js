@@ -1,19 +1,26 @@
-var CouchConnection = require('./lib/couch-connection').CouchConnection;
 /**
- * Defines the view from where the mapper get it's documents
+ * Defines the view + query options from where the mapper get it's documents
  *
- * This can either be a string specifying a view, or as here a bit of javascript for
+ * The map can either be a string or array specifying a view, or as here a bit of javascript for
  * a temporary view
  */
-function view(dbOptions) {
-    return function(doc) {
+var view = {
+    map: function(doc) {
         emit(doc._id, null);
-    };
-}
+    },
+    query: {}
+};
 
+/*
+var view = {
+    //This translates to _design/some_design/_view/some_view
+    map: ['some_design', 'some_view']
+}
+*/
 
 /**
  * If this mapper returns an object this is post'ed to CouchDB
+ * If an array is returned, each of it's objects are posted to CouchDB
  * If a non-object is returned, nothing happens
  */
 function map(key, value, doc) {
@@ -25,9 +32,8 @@ function map(key, value, doc) {
 /**
  * Maybe do some heavy lifting here
  */
-function prepare(dbOptions) {
+function prepare(connection) {
     console.log('Preparing to run mapper');
-    var connection = new CouchConnection(dbOptions);
     connection.sendRequest('get', '_all_docs', null, {query: {include_docs: true}}).then(function(response) {
         console.log(response);
     }, function(error) {console.error(error);});
@@ -36,7 +42,7 @@ function prepare(dbOptions) {
 /**
  * Maybe cleanup some stuff
  */
-function finish(dbOptions) {
+function finish(connection) {
     console.log('mapping completed');
 }
 
