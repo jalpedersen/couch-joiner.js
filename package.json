@@ -1,7 +1,7 @@
 {
     "name": "couch-joiner",
     "description": "Commandline utility for manipulating CouchDB documents",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "bin": {
         "couch-joiner": "./bin/couch-joiner-cli.js"
     },
