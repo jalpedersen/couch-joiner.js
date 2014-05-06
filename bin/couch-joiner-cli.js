@@ -7,7 +7,7 @@ var ProgressBar = require('progress');
 var fs = require('fs');
 var _ = require('underscore');
 var url = require('url');
-var CouchConnection = require('../lib/couch-connection').CouchConnection;
+var CouchConnection = require('../lib/couch-joiner').CouchConnection;
 
 var yargs = require('yargs')
             .alias('f', 'file')
