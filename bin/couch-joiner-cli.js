@@ -69,6 +69,9 @@ if (argv.header) {
 }
 var dbOptions = url.parse(dbUrl, true);
 dbOptions.headers = headers;
+if (argv.credentials) {
+    dbOptions.auth = argv.credentials;
+}
 
 var connection = new CouchConnection(dbOptions);
 
