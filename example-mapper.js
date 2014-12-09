@@ -21,7 +21,8 @@ var view = {
 /**
  * If this mapper returns an object this is post'ed to CouchDB
  * If an array is returned, each of it's objects are posted to CouchDB
- * If a non-object is returned, nothing happens
+ * If the string 'DELETE' is returned, the document is deleted
+ * If any other non-object is returned, nothing happens
  */
 function map(key, value, doc) {
     doc.new_value = 'hello';
